@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QSettings
 from PyQt5.QtGui import QIcon
 from waveWidget import WaveWidget
 
@@ -21,6 +21,7 @@ class App(QMainWindow):
 		self.pause = True
 		self.initUI()
 		self.move_center()
+		self.load_settings()
 
 	def initUI(self):
 		self.setWindowTitle(self.title)
@@ -42,7 +43,6 @@ class App(QMainWindow):
 
 
 		self.waveWidget = WaveWidget(self, background='default', name='Wave Widget')
-		self.waveWidget.setSource('./data/raw/2.m4a', 48000)
 		self.waveWidget.setMinimumHeight(350)
 		self.waveWidget.setStyleSheet("background-color:black;")
 		self.waveWidget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))		
@@ -98,11 +98,17 @@ class App(QMainWindow):
 
 	def on_inputBtn_clicked(self):
 		fname, ftype = QFileDialog.getOpenFileName(self, 'Open file', './',"Audio files (*.m4a)")
-		self.inputLine.setText(fname)
+		if fname:
+			self.inputLine.setText(fname)
+			self.save_settings()
+			self.load_wave()
+
 
 	def on_outputBtn_clicked(self):
 		fname = QFileDialog.getExistingDirectory(self, 'Select directory', './')
-		self.outputLine.setText(fname)
+		if fname:
+			self.outputLine.setText(fname)
+			self.save_settings()
 
 	def move_center(self):        
 		frame = self.frameGeometry()
@@ -113,6 +119,23 @@ class App(QMainWindow):
 	def on_playBtn_clicked(self):
 		self.pause = not self.pause
 		# self.waveWidget.play(True)
+
+	def load_settings(self):
+		settings = QSettings('star', 'wavemarker', self)
+		input_file = settings.value('input_file', type=str)
+		output_file = settings.value('output_file', type=str)
+		self.inputLine.setText(input_file)
+		self.outputLine.setText(output_file)
+		self.load_wave()
+
+	def save_settings(self):
+		settings = QSettings('star', 'wavemarker', self)
+		settings.setValue('input_file', self.inputLine.text())
+		settings.setValue('output_file', self.outputLine.text())
+
+	def load_wave(self):
+		if self.inputLine.text():
+			self.waveWidget.setSource(self.inputLine.text(), 48000)
 
 	# def closeEvent(self, event):
 	# 	reply = QMessageBox.question(self, 'Message',
