@@ -8,7 +8,7 @@ class PicButton(QPushButton):
 	def __init__(self, pic_name, parent=None):
 		super(PicButton, self).__init__('', parent)
 		self.setIcon(QIcon(pic_name))
-		
+
 
 class App(QMainWindow):
 	def __init__(self):
@@ -27,14 +27,14 @@ class App(QMainWindow):
 		self.setWindowTitle(self.title)
 		self.setGeometry(self.left, self.top, self.width, self.height)
 
-		self.inputBtn = QPushButton('Audio', self)
+		self.inputBtn = PicButton('./icons/wave.png', self)
 		self.inputBtn.clicked.connect(self.on_inputBtn_clicked)
 		self.inputLine = QLineEdit()
 		inputLayout = QHBoxLayout()
 		inputLayout.addWidget(self.inputLine)
 		inputLayout.addWidget(self.inputBtn)
 
-		self.outputBtn = QPushButton('Label', self)
+		self.outputBtn = PicButton('./icons/label.png', self)
 		self.outputBtn.clicked.connect(self.on_outputBtn_clicked)
 		self.outputLine = QLineEdit()
 		outputLayout = QHBoxLayout()
@@ -44,12 +44,16 @@ class App(QMainWindow):
 
 		self.lableInput = QLineEdit(self)
 		self.lableInput.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed))
+		self.undoBtn = PicButton('./icons/undo.png', self)
+		self.undoBtn.clicked.connect(self.on_undoBtn_clicked)
 		self.playBtn = PicButton('./icons/play.png', self)
 		self.playBtn.clicked.connect(self.on_playBtn_clicked)
 		self.clearBtn = PicButton('./icons/clear.png', self)
+		self.clearBtn.clicked.connect(self.on_clearBtn_clicked)
 		playLayout = QVBoxLayout()
 		playLayout.addWidget(self.lableInput)
 		playLayout.addWidget(self.playBtn)
+		playLayout.addWidget(self.undoBtn)
 		playLayout.addWidget(self.clearBtn)
 
 		self.waveWidget = WaveWidget(self, background='default', name='Wave Widget')
@@ -103,7 +107,6 @@ class App(QMainWindow):
 			self.save_settings()
 			self.load_wave()
 
-
 	def on_outputBtn_clicked(self):
 		fname = QFileDialog.getExistingDirectory(self, 'Select directory', './')
 		if fname:
@@ -119,6 +122,12 @@ class App(QMainWindow):
 	def on_playBtn_clicked(self):
 		self.pause = not self.pause
 		# self.waveWidget.play(True)
+
+	def on_undoBtn_clicked(self):
+		self.waveWidget.undoLabel()
+
+	def on_clearBtn_clicked(self):
+		self.waveWidget.clearLabel()
 
 	def load_settings(self):
 		settings = QSettings('star', 'wavemarker', self)

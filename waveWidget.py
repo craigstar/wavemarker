@@ -32,7 +32,6 @@ class WaveWidget(pg.PlotWidget):
 		self.wave_plot = self.plot(y=self.wave, x=x)
 		self.wave_plot.setZValue(0)
 
-	
 	def mouseDoubleClickEvent(self, event):
 		super(WaveWidget, self).mouseDoubleClickEvent(event)
 		x = self.mapToView(event.pos()).x()
@@ -56,11 +55,12 @@ class WaveWidget(pg.PlotWidget):
 	def setWaveLabel(self):
 		if not self.input_widget:
 			return
-
+		self.input_widget.setDisabled(False)
 		self.input_widget.setFocus()
 
-
 	def pushRect(self):
+		if not self.input_widget.text():
+			return
 		self.current_rect.setMovable(False)
 		self.current_rect.setBrush((0,0,255, 100))
 		
@@ -78,10 +78,26 @@ class WaveWidget(pg.PlotWidget):
 		self.input_widget.clear()
 		self.input_widget.clearFocus()
 
-
 	def setLabelInput(self, input_widget):
 		self.input_widget = input_widget
+		self.input_widget.editingFinished.connect(self.on_focus_out)
 		self.input_widget.returnPressed.connect(self.pushRect)
+
+	def on_focus_out(self):
+		self.input_widget.setDisabled(True)
+
+	def undoLabel(self):
+		if self.texts:
+			self.removeItem(self.texts.pop())
+		if self.rects:
+			self.removeItem(self.rects.pop())
+
+	def clearLabel(self):
+		while self.texts:
+			self.removeItem(self.texts.pop())
+
+		while self.rects:
+			self.removeItem(self.rects.pop())
 
 	# def play(self, is_pause):
 
