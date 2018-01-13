@@ -42,21 +42,21 @@ class App(QMainWindow):
 		outputLayout.addWidget(self.outputBtn)
 
 
-		self.waveWidget = WaveWidget(self, background='default', name='Wave Widget')
-		self.waveWidget.setMinimumHeight(350)
-		self.waveWidget.setStyleSheet("background-color:black;")
-		self.waveWidget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))		
-
-		self.startMarkBtn = PicButton('./icons/start.png', self)
-		self.endMarkBtn = PicButton('./icons/end.png', self)
+		self.lableInput = QLineEdit(self)
+		self.lableInput.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed))
 		self.playBtn = PicButton('./icons/play.png', self)
 		self.playBtn.clicked.connect(self.on_playBtn_clicked)
 		self.clearBtn = PicButton('./icons/clear.png', self)
 		playLayout = QVBoxLayout()
-		playLayout.addWidget(self.startMarkBtn)
-		playLayout.addWidget(self.endMarkBtn)
+		playLayout.addWidget(self.lableInput)
 		playLayout.addWidget(self.playBtn)
 		playLayout.addWidget(self.clearBtn)
+
+		self.waveWidget = WaveWidget(self, background='default', name='Wave Widget')
+		self.waveWidget.setMinimumHeight(350)
+		self.waveWidget.setStyleSheet("background-color:black;")
+		self.waveWidget.setLabelInput(self.lableInput)
+		self.waveWidget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))		
 
 		mediaLayout = QHBoxLayout()
 		mediaLayout.addWidget(self.waveWidget)
