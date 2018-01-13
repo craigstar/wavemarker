@@ -121,7 +121,7 @@ class App(QMainWindow):
 
 	def on_playBtn_clicked(self):
 		self.pause = not self.pause
-		# self.waveWidget.play(True)
+		self.waveWidget.play(self.pause)
 
 	def on_undoBtn_clicked(self):
 		self.waveWidget.undoLabel()
